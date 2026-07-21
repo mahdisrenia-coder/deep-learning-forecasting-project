@@ -1,3 +1,10 @@
+
+# LightTS MODEL
+#FFNN 
+#   1. Continuous sampling → captures local patterns
+#   2. Interval sampling → captures global patterns
+#   3. Combines both representations
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -46,30 +53,18 @@ class Model(nn.Module):
         chunk_size: int, reshape T into [num_chunks, chunk_size]
         """
         super(Model, self).__init__()
-        self.task_name = configs.task_name
         self.seq_len = configs.seq_len
-        if self.task_name == 'classification' or self.task_name == 'anomaly_detection' or self.task_name == 'imputation':
-            self.pred_len = configs.seq_len
-        else:
-            self.pred_len = configs.pred_len
+        self.pred_len = configs.pred_len
 
-        if configs.task_name == 'long_term_forecast' or configs.task_name == 'short_term_forecast':
-            self.chunk_size = min(configs.pred_len, configs.seq_len, chunk_size)
-        else:
-            self.chunk_size = min(configs.seq_len, chunk_size)
+        self.chunk_size = min(configs.pred_len, configs.seq_len, chunk_size)
+
         # assert (self.seq_len % self.chunk_size == 0)
         if self.seq_len % self.chunk_size != 0:
             self.seq_len += (self.chunk_size - self.seq_len % self.chunk_size)  # padding in order to ensure complete division
-        self.num_chunks = self.seq_len // self.chunk_size
 
+        self.num_chunks = self.seq_len // self.chunk_size
         self.d_model = configs.d_model
         self.enc_in = configs.enc_in
-        self.dropout = configs.dropout
-        if self.task_name == 'classification':
-            self.act = F.gelu
-            self.dropout = nn.Dropout(configs.dropout)
-            self.projection = nn.Linear(configs.enc_in * configs.seq_len, configs.num_class)
-        self._build()
 
     def _build(self):
         self.layer_1 = IEBlock(
@@ -135,31 +130,8 @@ class Model(nn.Module):
     def forecast(self, x_enc, x_mark_enc, x_dec, x_mark_dec):
         return self.encoder(x_enc)
 
-    def imputation(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask):
-        return self.encoder(x_enc)
-
-    def anomaly_detection(self, x_enc):
-        return self.encoder(x_enc)
-
-    def classification(self, x_enc, x_mark_enc):
-        enc_out = self.encoder(x_enc)
-
-        # Output
-        output = enc_out.reshape(enc_out.shape[0], -1)  # (batch_size, seq_length * d_model)
-        output = self.projection(output)  # (batch_size, num_classes)
-        return output
 
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask=None):
-        if self.task_name == 'long_term_forecast' or self.task_name == 'short_term_forecast':
-            dec_out = self.forecast(x_enc, x_mark_enc, x_dec, x_mark_dec)
-            return dec_out[:, -self.pred_len:, :]  # [B, L, D]
-        if self.task_name == 'imputation':
-            dec_out = self.imputation(x_enc, x_mark_enc, x_dec, x_mark_dec, mask)
-            return dec_out  # [B, L, D]
-        if self.task_name == 'anomaly_detection':
-            dec_out = self.anomaly_detection(x_enc)
-            return dec_out  # [B, L, D]
-        if self.task_name == 'classification':
-            dec_out = self.classification(x_enc, x_mark_enc)
-            return dec_out  # [B, N]
-        return None
+        dec_out = self.forecast(x_enc, x_mark_enc, x_dec, x_mark_dec)
+        return dec_out[:, -self.pred_len:, :]  # [B, L, D]
+
