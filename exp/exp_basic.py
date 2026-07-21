@@ -1,3 +1,18 @@
+
+# EXPERIMENT BASE CLASS
+# This is the foundation for all experiment classes.
+
+# Key Features:
+#   1. Automatic model discovery - scans models/ folder
+#   2. Lazy loading - only imports models when needed
+#   3. Device selection - CPU, CUDA, or MPS
+#   4. Template methods - child classes define train/val/test
+
+# Child Classes:
+#   - Exp_Long_Term_Forecasting: Forecasting experiments
+#   - Exp_Short_Term_Forecasting: Short-term forecasting
+#   - Exp_Anomaly_Detection: Anomaly detection experiments
+
 import os
 import torch
 import importlib

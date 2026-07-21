@@ -1,3 +1,54 @@
+
+
+# LONG-TERM FORECASTING EXPERIMENT
+# This file implements the training, validation, and testing logic
+# specifically for long-term time series forecasting.
+#
+# It inherits from the Exp_Basic class (exp_basic.py) and overrides
+# the required methods:
+#
+#   - _build_model()   : Instantiates the model (e.g., TimesNet, DLinear)
+#   - _get_data()      : Loads the data using data_provider()
+#   - _select_optimizer(): Uses Adam optimizer
+#   - _select_criterion(): Uses MSE loss
+#   - train()          : Full training loop with early stopping
+#   - vali()           : Validation loop to monitor overfitting
+#   - test()           : Final evaluation on test set
+#
+# KEY CONCEPTS:
+#
+# 1. Sliding Window (seq_len, label_len, pred_len)
+#    |←────── seq_len ──────→|← label_len →|←─ pred_len ─→|
+#    |─────────────────────|──────────────|───────────────|
+#    s_begin               s_end         r_begin       r_end
+#    - seq_len: Past points the model uses as input
+#    - label_len: Overlap between input and output (teacher forcing)
+#    - pred_len: Future points the model must predict
+#
+# 2. Encoder-Decoder Architecture
+#    - batch_x: Encoder input (past sequence)
+#    - dec_inp: Decoder input (label_len + zeros for pred_len)
+#    - The model predicts the full sequence autoregressively.
+#
+# 3. Training Features:
+#    - Early Stopping: Stops training when validation loss stops improving
+#    - Learning Rate Adjustment: Decays LR after each epoch
+#    - Mixed Precision (AMP): Speeds up training on compatible GPUs
+#    - Logging: Epoch time, iteration speed, remaining time
+#
+# 4. Evaluation:
+#    - Computes MSE, MAE, and RMSE on the test set
+#    - Optionally computes Dynamic Time Warping (DTW) distance
+#    - Saves predictions, true values, and visualizations
+#
+# DEPENDENCIES:
+#    - data_provider (data_factory.py)
+#    - exp_basic (exp_basic.py)
+#    - utils.tools (EarlyStopping, adjust_learning_rate, visual)
+#    - utils.metrics (metric functions for evaluation)
+# ============================================================
+
+
 from data_provider.data_factory import data_provider
 from exp.exp_basic import Exp_Basic
 from utils.tools import EarlyStopping, adjust_learning_rate, visual
