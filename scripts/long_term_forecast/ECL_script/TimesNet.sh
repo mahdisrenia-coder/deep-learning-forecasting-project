@@ -117,3 +117,31 @@ python -u run.py \
   --des 'Exp' \
   --itr 1 \
   --use_gpu
+
+
+
+##=============================
+## explanation of each terms 
+# python -u run.py \
+#   --task_name long_term_forecast \
+#   --is_training 1 \                     ## training = 1, test =0
+#   --root_path ./dataset/ETT-small/ \    ## root
+#   --data_path ETTh1.csv \               
+#   --model_id ETTh1_96_96 \              ## experiment Id: dataset, length, pred-lenght
+#   --model $model_name \
+#   --data ETTh1 \
+#   --features M \                        ## multivariate(predicts all the features)
+#   --seq_len 96 \
+#   --label_len 48 \                      ## Overlap between input and output
+#   --pred_len 96 \
+#   --e_layers 2 \                        ## Number of LSTM layers (stacked)
+#   --d_layers 1 \                        ## Number of decoder features(not usefull)
+#   --factor 3 \                          ## Expansion factor (not critical for LSTM)
+#   --enc_in 7 \                          ## Number of input features
+#   --dec_in 7 \
+#   --c_out 7 \                           ## Number of output features
+#   --d_model 16 \                        ##LSTM hidden size
+#   --d_ff 32 \                           ## Feed-forward dimension (compatibility)
+#   --des 'Exp' \                         ##description
+#   --itr 1 \
+#   --top_k 5 \

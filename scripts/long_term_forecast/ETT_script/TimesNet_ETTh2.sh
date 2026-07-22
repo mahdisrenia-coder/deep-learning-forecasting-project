@@ -69,10 +69,6 @@ python -u run.py \
   --itr 1 \
   --use_gpu
 
-# ============================================================
-# COMMENTED OUT: OTHER PREDICTION HORIZONS
-# ============================================================
-
 python -u run.py \
   --task_name long_term_forecast \
   --is_training 1 \

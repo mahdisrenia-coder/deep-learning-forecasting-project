@@ -1,7 +1,10 @@
-export CUDA_VISIBLE_DEVICES=1
+##export CUDA_VISIBLE_DEVICES=1      ## comment for run in collab 
 
 model_name=DLinear
 
+# ============================================================
+# PRED_LEN = 96
+# ============================================================
 python -u run.py \
   --task_name long_term_forecast \
   --is_training 1 \
@@ -20,9 +23,16 @@ python -u run.py \
   --enc_in 321 \
   --dec_in 321 \
   --c_out 321 \
+  --d_model 256 \
+  --d_ff 512 \
+  --top_k 5 \
   --des 'Exp' \
-  --itr 1
+  --itr 1 \
+  --use_gpu
 
+# ============================================================
+# PRED_LEN = 192
+# ============================================================
 python -u run.py \
   --task_name long_term_forecast \
   --is_training 1 \
@@ -41,9 +51,16 @@ python -u run.py \
   --enc_in 321 \
   --dec_in 321 \
   --c_out 321 \
+  --d_model 256 \
+  --d_ff 512 \
+  --top_k 5 \
   --des 'Exp' \
-  --itr 1
+  --itr 1 \
+  --use_gpu
 
+# ============================================================
+# PRED_LEN = 336
+# ============================================================
 python -u run.py \
   --task_name long_term_forecast \
   --is_training 1 \
@@ -62,9 +79,16 @@ python -u run.py \
   --enc_in 321 \
   --dec_in 321 \
   --c_out 321 \
+  --d_model 256 \
+  --d_ff 512 \
+  --top_k 5 \
   --des 'Exp' \
-  --itr 1
+  --itr 1 \
+  --use_gpu
 
+# ============================================================
+# PRED_LEN = 720
+# ============================================================
 python -u run.py \
   --task_name long_term_forecast \
   --is_training 1 \
@@ -83,5 +107,9 @@ python -u run.py \
   --enc_in 321 \
   --dec_in 321 \
   --c_out 321 \
+  --d_model 256 \
+  --d_ff 512 \
+  --top_k 5 \
   --des 'Exp' \
-  --itr 1
+  --itr 1 \
+  --use_gpu
