@@ -18,19 +18,23 @@ from layers.Conv_Blocks import Inception_Block_V1
 def FFT_for_Period(x, k=2):
     # [B, T, C]
     ## apply FFT (fast fourier transform)
+
     xf = torch.fft.rfft(x, dim=1)
     # find period by amplitudes
     ## Find frequencies with highest amplitude (most important periods)
+
     frequency_list = abs(xf).mean(0).mean(-1)
     frequency_list[0] = 0
     _, top_list = torch.topk(frequency_list, k)
     top_list = top_list.detach().cpu().numpy()
+
     ## convert frequency to period
     period = x.shape[1] // top_list
     return period, abs(xf).mean(-1)[:, top_list]
 
 #transforming 1D time series into 2D tensors and applying 2D convolutions.
 class TimesBlock(nn.Module):
+    
     def __init__(self, configs):
         super(TimesBlock, self).__init__()
         self.seq_len = configs.seq_len
