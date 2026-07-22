@@ -1,15 +1,28 @@
-export CUDA_VISIBLE_DEVICES=2
+
+## TIMESNET MODEL - Long-Term Forecasting on ETTh2
+## TimesNet uses FFT to discover periods and 2D convolutions
+## to capture intraperiod and interperiod variations.
+##
+## Course connection: Convolutional Neural Networks (CNN)
+## - 2D convolutions on reshaped time series
+## - Residual connections
+
+# export CUDA_VISIBLE_DEVICES=2    # Commented out for Colab
 
 model_name=TimesNet
+
+# ============================================================
+# RUN 1: PRED_LEN = 96
+# ============================================================
 
 python -u run.py \
   --task_name long_term_forecast \
   --is_training 1 \
   --root_path ./dataset/ETT-small/ \
-  --data_path ETTm1.csv \
-  --model_id ETTm1_96_96 \
+  --data_path ETTh2.csv \
+  --model_id ETTh2_96_96 \
   --model $model_name \
-  --data ETTm1 \
+  --data ETTh2 \
   --features M \
   --seq_len 96 \
   --label_len 48 \
@@ -20,20 +33,25 @@ python -u run.py \
   --enc_in 7 \
   --dec_in 7 \
   --c_out 7 \
-  --des 'Exp' \
-  --d_model 64 \
-  --d_ff 64 \
+  --d_model 16 \
+  --d_ff 32 \
   --top_k 5 \
-  --itr 1
+  --des 'Exp' \
+  --itr 1 \
+  --use_gpu
+
+# ============================================================
+# RUN 2: PRED_LEN = 192
+# ============================================================
 
 python -u run.py \
   --task_name long_term_forecast \
   --is_training 1 \
   --root_path ./dataset/ETT-small/ \
-  --data_path ETTm1.csv \
-  --model_id ETTm1_96_192 \
+  --data_path ETTh2.csv \
+  --model_id ETTh2_96_192 \
   --model $model_name \
-  --data ETTm1 \
+  --data ETTh2 \
   --features M \
   --seq_len 96 \
   --label_len 48 \
@@ -44,57 +62,63 @@ python -u run.py \
   --enc_in 7 \
   --dec_in 7 \
   --c_out 7 \
-  --des 'Exp' \
-  --d_model 64 \
-  --d_ff 64 \
-  --top_k 5 \
-  --itr 1
-
-python -u run.py \
-  --task_name long_term_forecast \
-  --is_training 1 \
-  --root_path ./dataset/ETT-small/ \
-  --data_path ETTm1.csv \
-  --model_id ETTm1_96_336 \
-  --model $model_name \
-  --data ETTm1 \
-  --features M \
-  --seq_len 96 \
-  --label_len 48 \
-  --pred_len 336 \
-  --e_layers 2 \
-  --d_layers 1 \
-  --factor 3 \
-  --enc_in 7 \
-  --dec_in 7 \
-  --c_out 7 \
-  --des 'Exp' \
   --d_model 16 \
   --d_ff 32 \
   --top_k 5 \
+  --des 'Exp' \
   --itr 1 \
-  --train_epochs 3
+  --use_gpu
 
-python -u run.py \
-  --task_name long_term_forecast \
-  --is_training 1 \
-  --root_path ./dataset/ETT-small/ \
-  --data_path ETTm1.csv \
-  --model_id ETTm1_96_720 \
-  --model $model_name \
-  --data ETTm1 \
-  --features M \
-  --seq_len 96 \
-  --label_len 48 \
-  --pred_len 720 \
-  --e_layers 2 \
-  --d_layers 1 \
-  --factor 3 \
-  --enc_in 7 \
-  --dec_in 7 \
-  --c_out 7 \
-  --des 'Exp' \
-  --d_model 16 \
-  --d_ff 32 \
-  --top_k 5 \
-  --itr 1
+# ============================================================
+# COMMENTED OUT: OTHER PREDICTION HORIZONS
+# ============================================================
+
+# python -u run.py \
+#   --task_name long_term_forecast \
+#   --is_training 1 \
+#   --root_path ./dataset/ETT-small/ \
+#   --data_path ETTh2.csv \
+#   --model_id ETTh2_96_336 \
+#   --model $model_name \
+#   --data ETTh2 \
+#   --features M \
+#   --seq_len 96 \
+#   --label_len 48 \
+#   --pred_len 336 \
+#   --e_layers 2 \
+#   --d_layers 1 \
+#   --factor 3 \
+#   --enc_in 7 \
+#   --dec_in 7 \
+#   --c_out 7 \
+#   --d_model 16 \
+#   --d_ff 32 \
+#   --top_k 5 \
+#   --des 'Exp' \
+#   --itr 1 \
+#   --use_gpu
+
+# python -u run.py \
+#   --task_name long_term_forecast \
+#   --is_training 1 \
+#   --root_path ./dataset/ETT-small/ \
+#   --data_path ETTh2.csv \
+#   --model_id ETTh2_96_720 \
+#   --model $model_name \
+#   --data ETTh2 \
+#   --features M \
+#   --seq_len 96 \
+#   --label_len 48 \
+#   --pred_len 720 \
+#   --e_layers 2 \
+#   --d_layers 1 \
+#   --factor 3 \
+#   --enc_in 7 \
+#   --dec_in 7 \
+#   --c_out 7 \
+#   --d_model 16 \
+#   --d_ff 32 \
+#   --top_k 5 \
+#   --des 'Exp' \
+#   --itr 1 \
+#   --use_gpu
